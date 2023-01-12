@@ -110,6 +110,7 @@ const login = async () => {
                               }}>
     <SelectDropdown       
                             value={selectedValue}
+                            dropdownButtonStyle={{backgroundColor:"white"}}
                             dropdownStyle={{ backgroundColor: 'white', borderRadius: 8,marginTop:0}}
                             dropdownOverlayColor='rgba(255, 255, 255, 0.5)'
                             rowStyle={{ height: 40, justifyContent: 'center', alignItems: 'center',backgroundColor:"white" }}

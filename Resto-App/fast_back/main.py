@@ -114,6 +114,9 @@ async def change_state(current_user: models.User = Depends(CRUD.get_current_acti
 @app.get("/restorantState/state")
 async def check_state(current_user: models.User = Depends(CRUD.get_current_active_user),db:Session=Depends(get_db)):
     return CRUD.check_state(db)
+@app.get("/restorantState/activity")
+async def check_activity(current_user: models.User = Depends(CRUD.get_current_active_user),db:Session=Depends(get_db)):
+    return CRUD.check_activity(db)
 @app.put("/restorantState/queue")
 async def change_queue_state(current_user: models.User = Depends(CRUD.get_current_active_user),db:Session=Depends(get_db)):
     if current_user.is_worker==1:

@@ -84,6 +84,7 @@ class restaurantState(BaseModel):
     time: datetime
     nbServed : int
     is_open : bool
+    is_active :bool
     stateOfQueue : bool 
     onHoldQueueJ : str
     passedJ : str

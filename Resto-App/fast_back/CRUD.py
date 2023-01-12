@@ -94,10 +94,21 @@ def add_state( db : Session,principal : str ="",desert : str ="",salad : str =""
     return db_restaurantState
 def check_state(db:Session):
     return (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_open
-def change_state(db:Session):
-    (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_open=not (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_open 
+def change_state(db:Session): 
+    rest=(db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first())
+    if rest.is_open==1:
+        rest.is_active=not rest.is_active
+    rest.is_open=not rest.is_open
+        
     db.commit()
-    return (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_open
+    return rest.is_open
+def check_activity(db:Session):
+    return (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_active
+def change_activity(db:Session):
+    (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_active=not (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_active
+    db.commit()
+    return (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_active
+
 def check_queue(db:Session):
     return (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).stateOfQueue
 def change_queue_state(db:Session):
@@ -210,6 +221,7 @@ def cancel_reservation_by_worker(db:Session):
     return "Reservation Deleted!"
 
 #JWT
+
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -247,16 +259,7 @@ async def get_current_active_user(current_user: models.User = Depends(get_curren
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
-def chek_reservation(id :int , db:Session):
-    rest =db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()
-    if rest.is_open:
-        reservation = get_reservation_by_id(id,db)
-        if reservation:
-            return True
-        else:
-            return False
-    else:
-        return False    
+    
     
 
 #Purchase

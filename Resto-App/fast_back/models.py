@@ -52,6 +52,7 @@ class restaurantState(Base):
     supliment = Column(String(20),default="")
     nbServed = Column(Integer, default=0)
     is_open = Column(Boolean, default=0)
+    is_active= Column(Boolean, default=1)
     stateOfQueue = Column(Boolean, default=1)
     onHoldQueueJ = Column(JSON,default={})
     passedJ = Column(JSON, default={})

@@ -16,7 +16,7 @@ const url= "http://10.0.2.2:8000"
 {/*_______________________ UseEffect ___________________________*/}
 
 useEffect(()=>{ /* Check if the Resto is open or closed and render neccesairy informations */ 
-  axios.get(url+'/restorantState/state')
+  axios.get(url+'/restorantState/activity') // activity instead of state 
   .then(response => {
    if (response.data==true){
     setmsg("Open")
