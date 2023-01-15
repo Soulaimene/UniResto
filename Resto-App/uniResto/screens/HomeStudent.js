@@ -42,6 +42,11 @@ function showAlert(title,msg) {
 
 const [autoRefresh, setAutoRefresh] = useState(false)
 const [error, setError] = useState(null);
+useEffect(() => {
+  if (error && error.status === 401) {
+    navigate.navigate('Login');
+  }
+}, [error]);
 
 
 useEffect(()=>{
@@ -53,7 +58,7 @@ useEffect(()=>{
     </TouchableOpacity>
     </View>
   )
-},[])
+},[refreshing])
 
 
 

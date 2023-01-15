@@ -100,7 +100,7 @@ useEffect(() => {/* get request to get the user student info*/
     .then(resp=> {if (resp.data==true) {
             axios.get(url+'/restorantState/queue') 
                 .then(resp =>
-                    { if (resp.data==false) {setmsg("Queue  is Frozen !"), setmsgopco("Restaurant Is Currently Open.")}
+                    { if (resp.data==true) {setmsg("Queue  is Frozen !"), setmsgopco("Restaurant Is Currently Open.")}
 
 
                     else {setmsg("Queue is Moving !"),setmsgopco("Restaurant Is Currently Open.")}}

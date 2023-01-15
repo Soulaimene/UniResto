@@ -40,7 +40,13 @@ useEffect(()=>{//logout button
   )
 },[])
 
-
+useEffect(()=>{
+  setref(true)
+  axios.get(url+"/restorantState/activity")
+  .then(resp => {if (resp.data==false) {
+      navigation.navigate("HomeStudent",{param:ref})}
+  })
+},[navigation.state.params])
 
 useEffect(()=>{     // closed to open resto
     setref(true)
@@ -101,7 +107,7 @@ useEffect(()=>{     //freeze/unfreze method
   axios.get(url+'/restorantState/queue') // 
   .then(response => {
    if (response.data==false){ 
-    setmsgfreezed('Freeze')
+    setmsgfreezed('UnFreeze')
     setButtonfreez(
       <TouchableOpacity 
                         onPress={() => axios.put(url+"/restorantState/queue") 
@@ -112,7 +118,7 @@ useEffect(()=>{     //freeze/unfreze method
       </TouchableOpacity>);
 
   } else{
-    setmsgfreezed('UnFreeze')
+    setmsgfreezed('Freeze')
     setButtonfreez(
       <TouchableOpacity     onPress={() => axios.put(url+"/restorantState/queue") 
                                 .then(navigation.navigate("ManageState",{param:ref})) } 

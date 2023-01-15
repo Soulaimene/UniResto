@@ -42,7 +42,7 @@ useEffect(()=>{
     </TouchableOpacity>
     </View>
   )
-},[refresh])
+},[])
 
 
 
