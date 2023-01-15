@@ -14,7 +14,50 @@ feature is implemented through the use of unique QR codes, which are generated a
 - [FastAPI](https://fastapi.tiangolo.com) a modern, fast (high-performance), web framework for building APIs with Python 3.6+ based on standard Python type hints.
 - [MySQL](https://www.mysql.com) a widely used, open-source relational database management system that is known for its reliability, robustness and performance.
 
+## Requirements:
+- MySQL
+- Virtual Environment : To create a virtual environment using python, use the command
+```python -m venv env ``` 
+in your project directory. This will create a new folder named "env" which contains the virtual environment. <br /> To activate the virtual environment, use the command source ```bash env/bin/activate ``` on Linux/macOS or ```env\Scripts\activate``` on Windows
+- FastAPI : run these commands(pyhton needs to be already installed):
+```python
+pip install "fastapi[all]
+pip install "uvicorn[standard]"
+pip install python-multipart
+pip install "python-jose[cryptography]"
+pip install "passlib[bcrypt]"
+pip install sqlalchemy
+pip install mysqlclient"
+```
+- React Native
+- Emulator(Android Studio) or [Expo Go](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en&gl=US&pli=1) on your phone.
 ## Configuration 
+### Database Configuration : 
+To create a database in your local machine you need to run these commands:
+1. ```bash mysql -u root -p ``` 
+2. Enter MySQL password(the one created when you installed mySQL]
+3. ```bash CREATE DATABASE DATABASE_NAME ``` 
+4. To connect the back-end to the MySQL database, you will need to replace the placeholder password in the [database.py](https://github.com/Soulaimene/RESTO/blob/master/Resto-App/fast_back/database.py) with your actual MySQL password and the placeholder "DATABASE_NAME" with the name of the database you have created. The tables for the database will be automatically created when the code  runs successfully.
+### How to run this code 
+
 First you have to clone this repository : 
-`git clone https://github.com/Soulaimene/RESTO.git ` <br />
+```bash
+git clone https://github.com/Soulaimene/RESTO.git 
+```
+then open the terminal and type :
+ ```bash
+cd RESTO/Resto-App/
+uvicorn fast_back.main:app --reload
+```
+Also, you have to use another terminal for the Bank.py :
+ ```bash
+cd RESTO/Resto-App/Bank
+python man.py 
+```
+and Finally, another terminal for the frontend 
+```bash 
+cd RESTO/Restp-App/UniResto
+npm start 
+```
+then press ```a``` inside the terminal to open the Emulator.
 
