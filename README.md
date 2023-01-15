@@ -52,7 +52,7 @@ uvicorn fast_back.main:app --reload
 Also, you have to use another terminal for the Bank.py :
  ```bash
 cd RESTO/Resto-App/Bank
-python man.py 
+python main.py 
 ```
 and Finally, another terminal for the frontend 
 ```bash 
