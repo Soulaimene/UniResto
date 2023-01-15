@@ -37,26 +37,26 @@ To create a database in your local machine you need to run these commands:
 1. ```bash mysql -u root -p ``` 
 2. Enter MySQL password(the one created when you installed mySQL]
 3. ```bash CREATE DATABASE DATABASE_NAME ``` 
-4. To connect the back-end to the MySQL database, you will need to replace the placeholder password in the [database.py](https://github.com/Soulaimene/RESTO/blob/master/Resto-App/fast_back/database.py) with your actual MySQL password and the placeholder "DATABASE_NAME" with the name of the database you have created. The tables for the database will be automatically created when the code  runs successfully.
+4. To connect the back-end to the MySQL database, you will need to replace the placeholder password in the [database.py](https://github.com/Soulaimene/UniResto/blob/master/Resto-App/fast_back/database.py) with your actual MySQL password and the placeholder "DATABASE_NAME" with the name of the database you have created. The tables for the database will be automatically created when the code  runs successfully.
 ### How to run this code 
 
 First you have to clone this repository : 
 ```bash
-git clone https://github.com/Soulaimene/RESTO.git 
+git clone https://github.com/Soulaimene/UniResto.git 
 ```
 then open the terminal and type :
  ```bash
-cd RESTO/Resto-App/
+cd UniResto/Resto-App/
 uvicorn fast_back.main:app --reload
 ```
 Also, you have to use another terminal for the Bank.py :
  ```bash
-cd RESTO/Resto-App/Bank
+cd UniResto/Resto-App/Bank
 python main.py 
 ```
 and Finally, another terminal for the frontend 
 ```bash 
-cd RESTO/Restp-App/UniResto
+cd UniResto/Restp-App/UniResto
 npm start 
 ```
 then press ```a``` inside the terminal to open the Emulator.
