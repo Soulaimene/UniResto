@@ -112,11 +112,12 @@ After, Running the code please follow the instructions :
 
 1. Open the UniResto app and log in.
 2. If there is no reservation active , follow the previous steps to create one.
-3. If the restaurant is not able to serve student , tap on "freeze" to announce that the queue is not moving, and tap "unfreeze" when the service is back.
-4. Once the stuff is ready , tap "open" to announce to the students that the restaurant is now serving.
-5. If the student is not present for his/her reservation, tap cancel reservation.
-6. If the student is present,tap scan to open the camera and then scan his QRcode.  
-7. Once the time comes, tap "close" to close the restaurant state.
+3. Tap on the "manage state" button to go to the restaurant state's screen.
+4. If the restaurant is not able to serve student , tap on "freeze" to announce that the queue is not moving, and tap "unfreeze" when the service is back.
+5. Once the stuff is ready , tap "open" to announce to the students that the restaurant is now serving.
+6. If the student is not present for his/her reservation, tap cancel reservation.
+7. If the student is present,tap scan to open the camera and then scan his QRcode.  
+8. Once the time comes, tap "close" to close the restaurant state.
 
 
 
