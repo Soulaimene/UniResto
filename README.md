@@ -61,3 +61,62 @@ npm start
 ```
 then press ```a``` inside the terminal to open the Emulator.
 
+# Interface Instructions 
+After, Running the code please follow the instructions :
+
+### Creating an account:
+
+1. Open the UniResto app.
+2. Tap on "Create an Account".
+3. Fill in your personal information such as your name, email, and password,and specify the type of user you are(student or worker).
+4. Tap on "Create Account" button to complete the process.
+### Loging in:
+
+1. Open the UniResto app.
+2. Enter your email and password and specify the type of user you are(student or worker).
+3. Tap on "Log In" button to access your account.
+
+### purshasing tickets(student):
+
+1. Open the UniResto app and log in.
+2. Tap on "Purshase Tickets" at the bottom of the screen.
+3. Fill in your personal information.
+4. specify the number of tickets your buying .
+5. Tap on "Purshase" to finish the transaction.
+
+### Make reservation(student):
+1. Open the UniResto app and log in.
+2. Buy tickets if you don't have any.
+3. If the restaurant is not active , wait for the worker to activate it.
+4. If the restaurant is active,Tap on "Make a reservation".
+
+### Check The menu(Student):
+1. Open the UniResto app and log in.
+2. If the restaurant is not active , wait for the worker to activate it.
+3. Once the restaurant is activated,the button "Check Menu" will appear, Tap on it
+
+### Verify or cancel your reservation:
+1. Open the UniResto app and log in.
+2. If you don't have a reservation,follow the steps on making one.
+3. Tap on the "manage reservation" to go your reservation page.
+4. To cancel your reservation tap on cancel your reservation
+5. To verify your reservation show your QRcode to the worker.
+
+### Create a Restaurant State:
+1. Open the UniResto app and log in.
+2.Tap on "create State".
+3. Enter the information of this meal.
+4. Tap On "create State".
+
+### Manage the queue and the reservations:
+
+1. Open the UniResto app and log in.
+2. If there is no reservation active , follow the previous steps to create one.
+3. If the restaurant is not able to serve student , tap on "freeze" to announce that the queue is not moving, and tap "unfreeze" when the service is back.
+4. Once the stuff is ready , tap "open" to announce to the students that the restaurant is now serving.
+5. If the student is not present for his/her reservation, tap cancel reservation.
+6. If the student is present,tap scan to open the camera and then scan his QRcode.  
+7. Once the time comes, tap "close" to close the restaurant state.
+
+
+
