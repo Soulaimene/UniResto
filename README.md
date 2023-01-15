@@ -76,7 +76,7 @@ After, Running the code please follow the instructions :
 2. Enter your email and password and specify the type of user you are(student or worker).
 3. Tap on "Log In" button to access your account.
 
-### purshasing tickets(student):
+### Purshasing tickets(student):
 
 1. Open the UniResto app and log in.
 2. Tap on "Purshase Tickets" at the bottom of the screen.
