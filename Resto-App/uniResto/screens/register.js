@@ -4,7 +4,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons"
 import { SelectList } from 'react-native-dropdown-select-list'
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SelectDropdown from 'react-native-select-dropdown'
-
+import { url } from './config';
 import { useState } from 'react';
 
 export default function Register({navigation}) {
@@ -53,7 +53,7 @@ const [IsSecureEntry2,setIsSecure2]=useState(true);
   }
 
 	const insertData=() =>{
-		fetch('http://10.0.2.2:8000/users/',{
+		fetch(url+'/users/',{
 			method:'POST',
 			headers : {
 				'Content-Type':'application/json'},

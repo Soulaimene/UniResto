@@ -4,17 +4,20 @@ from pydantic import BaseModel, fields
 from datetime import date,datetime
 class reservationBase(BaseModel):
     maker_id: int
-
+    restaurantState_id: int
 
 class reservationCreate(reservationBase):
     pass
 
 
+
 class reservation(reservationBase):
     id: int
-    restaurantState_id:int
+    
+    QRcode: str
     time: datetime
-    state: bool
+    
+
     class Config:
         orm_mode = True
 

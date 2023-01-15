@@ -3,29 +3,133 @@ import React from 'react'
 import { useState , useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import {Image,ImageBackground,SafeAreaView,StyleSheet,View,Text,TouchableOpacity} from 'react-native';
+import { Alert } from 'react-native';
+import {Image,ImageBackground,SafeAreaView,StyleSheet,View,Text,TouchableOpacity,RefreshControl,ScrollView  } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import COLORS from '../constants/colors'; 
+import { url } from './config';
 
 export default function HomeStudent({navigation}){
 
 {/*_______________________ Variables ___________________________*/}
 const [data, setData] = useState([]);
 const [button, setButton] = useState(null);
-const url= "http://10.0.2.2:8000"
-const [msgState,setmsg]=useState('Closed')
+const [msgState,setmsg]=useState(null)
+const [refreshing, setRefreshing] = useState(false);
+const [MakeRes,SetMakeRes]=useState(null);
+const [que,setque]=useState(null);
+const [ic,seticon]=useState(null)
+const [ref,setref]=useState(false)
+//const [modalVisible, setModalVisible] = useState(false);
+function showAlert(title,msg) {
+  Alert.alert(
+    title,
+    msg,
+    [
+      {text: 'OK', onPress: () => console.log('OK Pressed')},
+    ],
+    { cancelable: false }
+  )
+}
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    // perform refresh logic here
+    setTimeout(() => setRefreshing(false), 2000);}
 {/*_______________________ UseEffect ___________________________*/}
+
+const [autoRefresh, setAutoRefresh] = useState(false)
+
+
+useEffect(()=>{ //get nb of tickets
+  axios.get(url+"/getTickets/").then(resp => 
+    {setque (
+    <View>
+      <Text style={{fontWeight: 'bold',color: COLORS.white}} >You Have {resp.data} Tickets</Text>
+    </View>
+  )})
+},[refreshing])
+
 useEffect(()=>{ /* Check if the Resto is open or closed and render neccesairy informations */ 
-  axios.get(url+'/restorantState/state')
+setref(true)
+  axios.get(url+'/restorantState/activity') // 
   .then(response => {
-   if (response.data==false){
-    setmsg("Open")
-  }
-})
+   if (response.data==true){
+    
+    axios.get(url+"/reservation/check/")
+    .then(response => {
+        if (response.data == false) 
+        {
+                    {  SetMakeRes(
+                      
+                      <View style={{backgroundColor:"#rgb(34,21,57)",paddingVertical:10,borderTopRightRadius:15,borderBottomLeftRadius:15}}>
+                            <TouchableOpacity  onPress={() => {
+                              axios.post(url+'/makeReservation/')
+                                  .then(response => {
+                                      if (response.data === "You are out of tickets!") {
+                                          showAlert('Error !', "You are out of tickets!");
+                                      } else if (response.data === "You already had your meal!") {
+                                          showAlert('Error !', "You already had your meal!");
+                                      }
+                                      else if(response.data === "Reservation Failed!")
+                                      showAlert('Error !', "Reservation Failed!");
+                                       else {
+                                          showAlert('Success !', "Reservartion Made !");
+                                          navigation.navigate('HomeStudent',{param:ref});
+                                      }
+                                  })
+                                  .catch(error => {
+                                      showAlert('Error !', error.message);
+                                  });
+                          }}  
+                             >
+                              <Text style={{color:"white", textAlign:'center',fontWeight: 'bold'}}>Make Reservation</Text>
+                              
+                            </TouchableOpacity>
+                            </View>
+                       );}
+        }
+        else{
+          {  SetMakeRes(
+            <View style={{backgroundColor:"#rgb(34,21,57)",paddingVertical:10,borderTopRightRadius:15,borderBottomLeftRadius:15}}>
+            <TouchableOpacity  onPress={() =>navigation.navigate('ManageReservation')}  >
+              <Text style={{color:"white", textAlign:'center',fontWeight: 'bold'}}>Manage Reservation</Text>
+            </TouchableOpacity>
+            </View>
+            
+       )
+       ;}
+        }
+
+    })
+
+
+  } 
+ })
+
   .catch(error => {
     console.error(error);
-  });
-},[msgState])
+  });//});
+ 
+},[refreshing,navigation.state.params])
+
+
+
+useEffect(()=>{ // check if resto closed or open
+  axios.get(url+"/restorantState/state").then(resp=>{if(resp.data==true){
+    setmsg(<Text style={{color:"green"}}>Open !</Text>)
+
+  }
+  else{
+    setmsg(<Text style={{color:"red"}}>Closed !</Text>)
+  }
+})
+})
+
+
+
+
+
 useEffect(() => {/* get request to get the user student info*/
     axios.get(url+'/users/me/')
     .then(response => {
@@ -36,33 +140,66 @@ useEffect(() => {/* get request to get the user student info*/
       console.error(error);
     });
   }, []);
+
+
+
+  useEffect(()=>{ /* Check if the Resto is open or closed and render neccesairy informations */ 
+ 
+  axios.get(url+'/restorantState/activity') // 
+  .then(response => {
+   if (response.data==true){
+    
+          seticon (
+            <TouchableOpacity onPress={() => {navigation.navigate("Menu")}}>
+              <View style={style.iconContainer}>
+            <Icon name="restaurant" color={COLORS.red} size={20} />
+            <Text>Menu</Text>
+          </View>
+          </TouchableOpacity>
+          )
+
+  } 
+ })
+
+  .catch(error => {
+    console.error(error);
+  });//});
+ 
+},[refreshing])
+
+
+
 {/*_______________________ Markdown  ___________________________*/}
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
-      <StatusBar translucent backgroundColor="rgba(0,0,0,0)" />
+<ScrollView 
+  style={{flex:1,backgroundColor:"#130B20"}}
+  contentContainerStyle={{flex:1}}
+  refreshControl={
+    <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+  }
+>
+    <View style={{flex:1}}>
+  
       <ImageBackground style={{flex: 0.7}} source={require('../assets/Logo.jpg')}>
         <View style={style.header}>
-          
+         
         </View>
         <View style={style.imageDetails}>
+  
 
-          <View style={{flexDirection: 'row'}}>
-         
-          </View>
         </View>
       </ImageBackground>
+    
       <View style={style.detailsContainer}>
-        <View style={style.iconContainer}>
-          <Icon name="restaurant" color={COLORS.red} size={20} />
-        </View>
+        <View>{ic}</View>
+             
         <View style={{flexDirection: 'row', marginTop: 1,flexDirection:'row',alignItems:'center'}}>
-          <Icon name="lock" size={28} color={COLORS.red} style={{marginTop:10}} />
+          <Icon name="people" size={28} color={COLORS.red} style={{marginTop:10}} />
           <Text
             style={{
-              
               marginTop: 10,
-              width:350,              
+              width:350,        
               marginLeft: 5,
               fontSize: 20,
               fontWeight: 'bold',
@@ -72,40 +209,41 @@ useEffect(() => {/* get request to get the user student info*/
           </Text>
         </View>
 
-        <Text style={{width: '100%',marginLeft:30,marginRight: 50, marginTop: 20, fontWeight: '500', fontSize: 20, alignItems: 'center' }}>
+        <Text style={{width: '100%',marginLeft:30,marginRight: 50, marginTop: 20, fontWeight: '500', fontSize: 20, alignItems: 'center',color:COLORS.dark }}>
             Restaurant is currently <Text style={{color:COLORS.red}}>{msgState}</Text>  
         </Text>
-        <Text style={{width: '100%',marginLeft:10,marginRight: 50, marginTop: 12, fontWeight: '300', fontSize: 20, alignItems: 'center' }}>
-           Please wait until it opens sp you can make  
-        </Text>
-        <Text style={{width: '100%',marginLeft:120,marginRight: 50, marginTop: 12, fontWeight: '300', fontSize: 20, alignItems: 'center' }}>
-            your reservation  
-        </Text>
-        <Text style={{marginTop: 20, lineHeight: 22}}></Text>
-      </View>
-      <View style={style.footer}>
-        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-          <Text
-            style={{
-              width: 350,
-              marginLeft: 5,
-              fontSize: 12,
-              fontWeight: 'bold',
-              color: COLORS.white,
-            }}>
-            2.5D/Per Ticket bundle
- 
-          </Text>
+        <View style={{ paddingHorizontal:50,marginTop:25}} >
+        {MakeRes}
         </View>
-        <TouchableOpacity style={style.bookNowBtn}>
-          <Text
-            style={{color: COLORS.red, fontSize: 16, fontWeight: 'bold'}}>
-            Purchase Tickets 
+      </View>
+  
+      <View style={style.footer}>
+        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  width: 350}}>
+            {que}
+        </View>
+
+        <TouchableOpacity 
+        onPress={() =>navigation.navigate('Edinar')}
+        style={style.bookNowBtn}>
+
+    
+
+          <Text  style={{color: COLORS.red, fontSize: 16, fontWeight: 'bold'}}> Purchase Tickets  </Text>
+          <Text style={{fontSize:11}}
+        >
+            
+            2.5D/Per Ticket bundle
           </Text>
+          
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+      
+      
+    </View> 
+    </ScrollView>
+    
   );
+ 
 };
 const style = StyleSheet.create({
   bookNowBtn: {
@@ -118,10 +256,10 @@ const style = StyleSheet.create({
   },
 
   iconContainer: {
-    height: 50,
-    width: 50,
+    height: 60,
+    width: 80,
     position: 'absolute',
-    top: -30,
+    top: -47,
     backgroundColor: COLORS.white,
     borderRadius: 30,
     right: 20,
@@ -130,13 +268,14 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   detailsContainer: {
-    top: -40,
+    
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingVertical: 20,
     paddingHorizontal: 20,
-    backgroundColor: COLORS.white,
+    backgroundColor: "white",
     flex: 0.3,
+  
   },
   header: {
     marginTop: 60,
@@ -159,8 +298,8 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
   },
 });
 
@@ -168,3 +307,14 @@ const style = StyleSheet.create({
 
 
 
+
+
+        {/* <View>
+            <Button title="Open Modal" onPress={() => setModalVisible(true)} />
+            <Modal visible={modalVisible} animationType="slide">
+                <View>
+                    <Text>This is the content of the modal</Text>
+                    <Button title="Close Modal" onPress={() => setModalVisible(false)} />
+                </View>
+            </Modal>
+        </View> */}

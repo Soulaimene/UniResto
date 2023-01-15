@@ -8,7 +8,7 @@ import axios from 'axios';
 import SelectDropdown from 'react-native-select-dropdown'
 import COLORS from '../constants/colors';
 
-
+import { url } from './config';
 
 
 export default function Login({navigation}) {
@@ -35,6 +35,7 @@ const [password,SetPassword]=useState('')
 const behavior=Platform.OS === "ios" ? "position" : "";
 const [error, setError] = useState(null);
 const data = new FormData();
+
 data.append('username', email);
 data.append('password', password);
 data.append('client_id', index);
@@ -42,12 +43,14 @@ data.append('client_id', index);
 
 const login = async () => {
   
-    await axios.post('http://10.0.2.2:8000/token/', data, { headers: { 'Content-Type': 'multipart/form-data' } })
+    await axios.post(url + '/token/', data, { headers: { 'Content-Type': 'multipart/form-data' } })
     .then(result => {
     if (result.data.access_token) {
       // Save the access_token in the header for future requests
       axios.defaults.headers.common['Authorization'] = `Bearer ${result.data.access_token}`;
       axios.defaults.headers.post['Authorization'] = `Bearer ${result.data.access_token}`;
+      axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+      
       if (index==0)
         {navigation.navigate('HomeStudent')}
       else 
@@ -55,7 +58,8 @@ const login = async () => {
     }
     
 }).catch(err => {
-    console.log(err.response.data)
+   console.log(err.response.data)
+    
 })
     
 }
@@ -125,7 +129,9 @@ const login = async () => {
                             
                           
                       />    
+                      
                       </View>
+                     
     <TouchableOpacity 
     onPress={()=>login()} 
     style={{

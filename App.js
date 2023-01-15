@@ -7,7 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Navigator from './routes/HomeStack';
 import axios from 'axios';
 const api = axios.create({
-  baseURL: 'http://localhost:8000', // replace with the URL of your FastAPI backend
+  baseURL: 'https://80f1-197-6-115-220.eu.ngrok.io', // replace with the URL of your FastAPI backend
 });
 
 

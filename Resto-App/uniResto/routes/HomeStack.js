@@ -5,7 +5,11 @@ import Register from "../screens/register";
 import HomeStudent from "../screens/HomeStudent";
 import HomeWorker from "../screens/HomeWorker";
 import CreateState from "../screens/CreateState"
-import Edinar from "../screens/edinar"
+import Menu from "../screens/Menu"
+import ManageState from "../screens/ManageState"
+import QRr from "../screens/QRr"
+import ManageReservation from "../screens/ManageReservation"
+import Edinar from "../screens/Edinar"
 const screens ={
     Login: {
         screen: Login
@@ -15,7 +19,8 @@ const screens ={
         screen:Register
     } ,
     HomeStudent:{
-        screen:HomeStudent
+        screen:HomeStudent,
+
     },
     HomeWorker:{
         screen:HomeWorker
@@ -25,7 +30,20 @@ const screens ={
     },
     Edinar:{
         screen:Edinar
+    },
+    ManageState:{
+        screen:ManageState
+    },
+    QRr:{
+        screen:QRr
+    },
+    ManageReservation:{
+        screen:ManageReservation
+    },
+    Menu:{
+        screen:Menu
     }
 }
 const HomeStack= createStackNavigator(screens);
+
 export default  createAppContainer(HomeStack);

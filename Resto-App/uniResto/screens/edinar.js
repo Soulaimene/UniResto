@@ -1,95 +1,88 @@
 import { StatusBar } from 'expo-status-bar';
-import {Image, KeyboardAvoidingView,SafeAreaView, StyleSheet, Text, TextInput, View, Button, TouchableOpacity } from 'react-native';
+import {Image, KeyboardAvoidingView,SafeAreaView, StyleSheet, Text, TextInput, View, Button, TouchableOpacity,ScrollView} from 'react-native';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
+import axios from 'axios';
+import { useState ,useEffect} from 'react';
+import { url } from './config';
+import COLORS from '../constants/colors';
 
-import { useState } from 'react';
 
+export default function Edinar({navigation}) {
+const [nb_tickets,setnb]=useState(0)
+const [password,setpass]=useState('')
+const [name,setname]=useState('')
+//   const data = new FormData();
 
-export default function Edinar() {
-  
+// data.append('nb_tickets', nb_tickets);
+// data.append('accountPassword', password);
+// data.append('accountName', name);
+data = {"nb_tickets":nb_tickets,
+        "accountName":name,
+        "accountPassword":password
+        }
 
   return (
 
-    <SafeAreaView style={{flex:1 , justifyContent : "center",backgroundColor:"#E93C49"}}>
+    <ScrollView >
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "position" : ""} enabled style={{flex:1,justifyContent : "center"}}>
 
-      <View style={{flex:2,backgroundColor:"#E93C49"}}>
+      <View style={{flex:2,backgroundColor:COLORS.dark}}>
       <View style={{alignItems:'center'}}>
-        <Image style={{resizeMode : "stretch",height: 200, width: 300,marginTop:80}} source = {require('../images/jeuneCard.png')} />
+        <Image style={{resizeMode : "stretch",height:150, width: 300,marginTop:10}} source = {require('../images/jeuneCard.png')} />
       </View>
       </View>
 
       <View style={{flex:3,backgroundColor:"#fff" ,borderTopLeftRadius: 50,borderTopRightRadius: 50}}>
         <View style={{marginTop:40,marginHorizontal:40,}}>
-            <View style={{flexDirection:"row"}}>
-              <Text style={{fontWeight:'600',fontSize:16}}>Next Payement</Text>
-              <MaterialCommunityIcons  name='plus-box' size={30} color="#666" style={{marginLeft:130}}/>
-            </View>
-            <Text style={{marginTop:16,fontSize:15,fontWeight:'500',color:'#666'}}>Card Number</Text>
-            <View style={{ flexDirection:"row", backgroundColor:"#ccc",borderRadius:12,marginTop:12,paddingBottom:20}}>
-              <TextInput 
-                    placeholder='' 
-                    keyboardType="numeric"
-                    style={{flex:1,marginLeft:12}}/>
-            </View>
+
+                <View style={{flexDirection:"row"}}>
+                  <Text style={{fontWeight:'600',fontSize:16}}>Next Payement</Text>
+                  <MaterialCommunityIcons  name='plus-box' size={30} color="#666" style={{marginLeft:130}}/>
+                </View>
+
+            <TextInput style={{borderBottomWidth:1,borderBottomColor:"#ccc",marginTop:16,fontSize:15,fontWeight:'500',color:'#666'}}
+            placeholder='  Account Name' 
+             value={name}
+          onChangeText={text=>setname(text)}
+        />
+
+            <TextInput style={{borderBottomWidth:1,borderBottomColor:"#ccc",marginTop:20,fontSize:15,fontWeight:'500',color:'#666'}}
+                        placeholder='  Password' 
+                        value={password}
+                        secureTextEntry={true}
+                        onChangeText={text=>setpass(text)}      />
+       
+        
             
-            <Text style={{marginTop:16,fontSize:15,fontWeight:'500',color:'#666'}}>Password</Text>
-            <View style={{ flexDirection:"row", backgroundColor:"#ccc",borderRadius:12,marginTop:12,paddingBottom:20}}>
-              <TextInput 
-                    placeholder='' 
-                    secureTextEntry={true}
-                    style={{flex:1,marginLeft:12}}/>
-            </View>
 
 
-            <View style={{flexDirection:"row"}}>
+
+            <View style={{alignItems:"center"}}>
 
 
-              <View>
-                <Text style={{marginTop:16,fontSize:14,fontWeight:'500',color:'#666',marginLeft:12}}>CVV</Text>
-                <View style={{flexDirection:"row"}}>
-
-                   <View style={{backgroundColor:"#ccc",borderRadius:12,marginTop:12,height:50,width:80}}>
-                      <TextInput 
-                        placeholder='' 
-                       keyboardType="numeric"
-                       secureTextEntry={true}
-                       style={{flex:1,marginLeft:12}}/>
-                    </View>
-                </View>
-              </View>
+             
 
               <View style={{marginLeft:15}}>
-                <Text style={{marginTop:16,fontSize:14,fontWeight:'500',color:'#666'}}>Expire Date</Text>
-                <View style={{flexDirection:"row"}}>
-
-                  <View style={{backgroundColor:"#ccc",borderRadius:12,marginTop:12,height:50,width:100}}>
-                      <TextInput 
-                        placeholder='' 
-                        style={{flex:1,marginLeft:12}}/>
-                  </View>
-              
-                </View>
-              </View>
-
-              <View style={{marginLeft:15}}>
-                <Text style={{marginTop:16,fontSize:13,fontWeight:'500',color:'#666'}}>Number of Tickets</Text>
-                <View style={{flexDirection:"row"}}>
-
-                  <View style={{backgroundColor:"#ccc",borderRadius:12,marginTop:12,height:50,width:150,marginRight:5}}>
-                      <TextInput 
-                        placeholder='' 
+                
+                <TextInput style={{marginTop:16,fontSize:13,fontWeight:'500',borderBottomWidth:1,borderBottomColor:"#ccc"}}
+                        placeholder='  Number of Tickets ' 
+                        value={nb_tickets}
                         keyboardType="numeric"
-                        style={{flex:1,marginLeft:12}}/>
-                  </View>
+                        onChangeText={a=>setnb(a)}
+                />
+                <View style={{flexDirection:"row"}}>
+
+           
               
                 </View>
               </View>
             </View>
-        <TouchableOpacity style={{
+        <TouchableOpacity 
+        onPress={()=>axios.post(url+'/purchase/',data,{ headers: { 'Content-Type': 'application/json' } }).then(resp => navigation.navigate("HomeStudent"))}
+        style={{
         paddingVertical:10,
         marginTop:40,
-        backgroundColor:"#E93C49",
+        backgroundColor:COLORS.red,
         borderRadius:10,
         }}>
         <Text style={{color:"#fff",textAlign:"center"}}>Proceed Payement</Text>
@@ -99,7 +92,7 @@ export default function Edinar() {
       </View>
       </KeyboardAvoidingView>
 
-    </SafeAreaView>
+    </ScrollView>
 
  
   );

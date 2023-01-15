@@ -1,40 +1,109 @@
 import React from 'react'
-import { KeyboardAvoidingView,SafeAreaView, StyleSheet, Text, TextInput, View, Button, TouchableOpacity, Platform,ScrollView } from 'react-native';
+import { Image,SafeAreaView, StyleSheet, Text, TextInput, View, Button,ImageBackground, TouchableOpacity, Platform,ScrollView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import axios from 'axios';
 import { useState , useEffect} from 'react';
-
+import { url } from './config';
+import COLORS from '../constants/colors';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 export default function HomeWorker({navigation}){
 
 
 {/*_______________________ Variables ___________________________*/}
 const [data, setData] = useState([]);
-const [msgState,setmsg]=useState('Closed')
+const [msgState,setmsg]=useState(null)
 const [button, setButton] = useState(null);
 const [params,setparams] = useState(null);
-const url= "http://10.0.2.2:8000"
+const [Statemsg,setStatemsg]=useState('');
+
+const [x,setx]=useState(null);
+const [logout,setLogout]=useState(null);
+const [refresh, setRefresh] = useState(null);
+const [ref,setref]=useState(false)
 {/*_______________________ UseEffect ___________________________*/}
 
-useEffect(()=>{ /* Check if the Resto is open or closed and render neccesairy informations */ 
-  axios.get(url+'/restorantState/activity') // activity instead of state 
+useEffect(()=>{
+  setLogout(
+    <View style={{position: 'absolute', right: 5, top: -20}}>
+    <TouchableOpacity  style ={{backgroundColor: "#2080A0",opacity: 0.6,borderRadius:10,borderColor:"white",paddingHorizontal:9,paddingVertical:9,flexDirection:"row"}}onPress={()=>{ delete axios.defaults.headers.common["Authorization"]; navigation.navigate("Login");console.log( axios.defaults.headers.common["Authorization"])}} >
+      <Icon name="logout" color={COLORS.white} size={15}/>
+      <Text style={{color:"white",fontWeight:"bold",marginLeft:5}}>Log Out</Text>
+    </TouchableOpacity>
+    </View>
+  )
+},[refresh])
+
+
+
+
+
+
+
+useEffect(()=>{ // Manage or create State 
+  setref(true)
+  //const unsubscribe = navigation.addListener('focus', () => {
+   axios.get(url+'/restorantState/activity')
+
   .then(response => {
+    setRefresh(response.data)
+    console.log(refresh)
    if (response.data==true){
-    setmsg("Open")
-    setButton(
-      <TouchableOpacity  style={styles.CreateState} >
-        <Text style={{color:"#fff"}}>Manage State</Text>
-      </TouchableOpacity>);
-  } else{
-    setButton(
-      <TouchableOpacity onPress={() => {navigation.navigate('CreateState')}} style={styles.CreateState} >
-        <Text style={{color:"#fff"}}>Create State</Text>
-      </TouchableOpacity>)
+            setButton(
+                  <TouchableOpacity  onPress={() => {navigation.navigate('ManageState',{param:ref})}}  style={styles.CreateState} >
+                   <Icon name="local-dining" color={COLORS.white} size={20}/>
+                    <Text style={{color:"#fff"}}>Manage State</Text>
+                    
+                  </TouchableOpacity>
+              );
+
+            axios.get(url+'/restorantState/meal')
+                .then(response=>{
+                      console.log(response.data)
+                  })
+  } else {
+          
+          setButton(
+            <TouchableOpacity onPress={() => {navigation.navigate('CreateState',{param:ref})}} style={styles.CreateState} >
+              <Text style={{color:"#fff"}}>Create State</Text>
+            </TouchableOpacity>)
   }
 })
+
   .catch(error => {
     console.error(error);
-  });
-},[msgState])
+  })
+},[navigation.state.params])
+
+
+useEffect(()=>{ /* Check if the Resto is open or closed and render neccesairy informations */ 
+  axios.get(url+'/restorantState/state') // 
+  
+  .then(response => {
+    console.log(response.data)
+   if (response.data==true){
+    
+    setmsg(
+    <View style={{marginTop:20}}>
+      <Text style={{color:COLORS.white,textAlign:"center"}}>Restaurant is currently : </Text> 
+      <Text style={{color:"green",textAlign:"center",fontWeight:"bold"}}> Open</Text>
+      </View>
+    )
+  } else{
+    setmsg(<View style={{marginTop:20}}>
+          <Text style={{color:COLORS.white,textAlign:"center"}}>Restaurant is currently : </Text> 
+          <Text style={{color:COLORS.red,textAlign:"center",fontWeight:"bold"}}> Closed</Text>
+    </View>)
+  }
+  console.log(msgState)})
+
+  .catch(error => {
+    console.error(error);
+  });//});
+  //return unsubscribe;
+},[navigation.state.params])
+
+
 useEffect(() => {     /* get request to get the user worker info*/
 axios.get(url+'/users/me/')
 .then(response => {
@@ -74,22 +143,27 @@ console.log("z")
     {/*__________________________________Page Design _________________________________*/}
     return (
       
-<ScrollView>
+<ScrollView style={{backgroundColor:COLORS.dark}}>
     <SafeAreaView style={{flex:1 , justifyContent : "center",flexDirection: "column"}}>
+
 
         <View style={{paddingHorizontal:25}}>
             <View style={{marginTop:50,alignItems: 'center'}}>
-            <Text style={{fontSize:28}}>Welcome  </Text>
-            <Text style={{fontWeight: "bold",fontSize:30}}>Mr. {data.name} !  </Text>
+
+            {logout}
+                        <Text style={{fontSize:28,color:"white"}}>Welcome  </Text>
+            <Text style={{fontWeight: "bold",fontSize:30,color:"white"}}>Mr. {data.name} !  </Text>
             </View>
         </View>
-        <View style={{alignItems:'center',marginTop:20}}>
-            <Text >You Have {data.nb_tickets} Tickets ! </Text>
-        </View>
-        <TouchableOpacity>
-            <Text>Resto is Currently {msgState}</Text>
-        </TouchableOpacity>
-        <View style={{ paddingHorizontal:50,marginTop:25}} >
+        <Image
+      source={require('../assets/Logo.jpg')}
+      style={{width: 350, height: 250,marginLeft:30}}
+    />
+
+        <View style={{alignItems:"center"}}>{msgState}</View>
+            
+        
+        <View style={{marginTop:25}} >
         {button}
         </View>
       <View>
@@ -110,8 +184,9 @@ const styles = StyleSheet.create({
     CreateState:{
       alignItems:"center",
       backgroundColor:"#E93C49",
-      paddingVertical:20,
+      paddingVertical:5,
       borderRadius:10,
+      marginHorizontal:60,
       
     }
   });

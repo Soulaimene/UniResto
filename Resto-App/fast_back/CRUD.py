@@ -82,90 +82,120 @@ def authenticate_user(db:Session,type :str, email: str, password: str):
 
 #Restorant_state
 
-def add_state( db : Session,principal : str ="",desert : str ="",salad : str ="",meat : str ="",supliment : str ="" ):
-    
-    onHoldQueue =[]
-    
-    passed=[]
-    db_restaurantState = models.restaurantState(principal =principal,desert =desert,salad =salad,meat =meat,supliment = supliment,onHoldQueueJ=json.dumps(onHoldQueue),passedJ = json.dumps(passed))
-    db.add(db_restaurantState)
-    db.commit()
-    db.refresh(db_restaurantState)
-    return db_restaurantState
+def add_state(db: Session, principal: str = "", desert: str = "", salad: str = "", meat: str = "", supliment: str = ""):
+    rest = (db.query(models.restaurantState).order_by(
+        models.restaurantState.id.desc()).first())
+    if not (rest) or rest.is_active == 0:
+        onHoldQueue = []
+
+        passed = []
+        db_restaurantState = models.restaurantState(principal=principal, desert=desert, salad=salad,
+                                                    meat=meat, supliment=supliment, onHoldQueueJ=json.dumps(onHoldQueue), passedJ=json.dumps(passed))
+        db.add(db_restaurantState)
+        db.commit()
+        db.refresh(db_restaurantState)
+        return db_restaurantState
+    else:
+        return "You have to desactivate the previous state!"
+
 def check_state(db:Session):
     return (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_open
-def change_state(db:Session): 
-    rest=(db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first())
-    if rest.is_open==1:
-        rest.is_active=not rest.is_active
-    rest.is_open=not rest.is_open
-        
+
+def change_state(db: Session):
+    rest = (db.query(models.restaurantState).order_by(
+        models.restaurantState.id.desc()).first())
+    if rest.is_open == 1:
+        rest.is_active = not rest.is_active
+    rest.is_open = not rest.is_open
+
     db.commit()
     return rest.is_open
-def check_activity(db:Session):
-    return (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_active
-def change_activity(db:Session):
-    (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_active=not (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_active
+
+
+def check_activity(db: Session):
+    if ((db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first())):
+        return (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_active
+    else:
+        return False
+
+
+def change_activity(db: Session):
+    (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_active = not (
+        db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_active
     db.commit()
     return (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).is_active
 
-def check_queue(db:Session):
+
+def check_queue(db: Session):
     return (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).stateOfQueue
-def change_queue_state(db:Session):
-    (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).stateOfQueue=not (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).stateOfQueue 
+
+
+def change_queue_state(db: Session):
+    (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).stateOfQueue = not (
+        db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).stateOfQueue
     db.commit()
     return (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).stateOfQueue
 
-def check_queue_position(user_id:int,db:Session):
-    
-    rest =db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()
-    
+
+def check_queue_position(user_id: int, db: Session):
+
+    rest = db.query(models.restaurantState).order_by(
+        models.restaurantState.id.desc()).first()
+
     onHoldQueue = json.loads(rest.onHoldQueueJ)
-    
+
     return onHoldQueue.index(user_id)
 
-def check_meal(db:Session):
-    reState=db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()
-    D={"principal" : reState.principal , 
-    "desert" : reState.desert ,
-    "salad" : reState.salad ,
-    "meat" : reState.meat,
-    "supliment ": reState.supliment}
+
+def check_meal(db: Session):
+    reState = db.query(models.restaurantState).order_by(
+        models.restaurantState.id.desc()).first()
+    D = {"principal": reState.principal,
+         "desert": reState.desert,
+         "salad": reState.salad,
+         "meat": reState.meat,
+         "supliment ": reState.supliment}
     return D
 
 #Reservation
 def get_reservations(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.reservation).offset(skip).limit(limit).all()
 
-def get_reservation_by_id(id:int, db: Session):
-    resId=(db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).id
-    return db.query(models.reservation).filter(models.reservation.maker_id == id,models.reservation.restaurantState_id==resId).first()
 
-def delete_reservation_by_id(id:int, db: Session):
-    reservationToDelete=get_reservation_by_id(id, db)
+def get_reservation_by_id(id: int, db: Session):
+    resId = (db.query(models.restaurantState).order_by(
+        models.restaurantState.id.desc()).first()).id
+    return db.query(models.reservation).filter(models.reservation.maker_id == id, models.reservation.restaurantState_id == resId).first()
+
+
+def delete_reservation_by_id(id: int, db: Session):
+    reservationToDelete = get_reservation_by_id(id, db)
     db.delete(reservationToDelete)
     db.commit()
     return "Reservation deleted!"
 
-def create_reservation(user_id: int,db: Session):
-    rest =db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()
+
+def create_reservation(user_id: int, db: Session):
+    rest = db.query(models.restaurantState).order_by(
+        models.restaurantState.id.desc()).first()
     onHoldQueue = json.loads(rest.onHoldQueueJ)
-    
+
     passed = json.loads(rest.passedJ)
     user = get_user(db, user_id)
-    if rest.is_open :
-        if user.nb_tickets>0:
+    if rest.is_active:
+        if user.nb_tickets > 0:
             if (user_id in onHoldQueue):
-                return "You already have a reservation!" 
+                return "You already have a reservation!"
             elif (user_id in passed):
                 return "You already had your meal!"
-            else :
+            else:
                 onHoldQueue.append(user_id)
-                rest.onHoldQueueJ=json.dumps(onHoldQueue)
-                db.commit()
+                rest.onHoldQueueJ = json.dumps(onHoldQueue)
+                #db.commit()
                 secret_token = secrets.token_hex(16)
                 #
-                db_reservation = models.reservation( maker_id=user_id,restaurantState_id=rest.id,QRcode=secret_token)
+                db_reservation = models.reservation(
+                    maker_id=user_id, restaurantState_id=rest.id, QRcode=secret_token)
                 db.add(db_reservation)
                 db.commit()
                 db.refresh(db_reservation)
@@ -173,52 +203,79 @@ def create_reservation(user_id: int,db: Session):
         else:
             return "You are out of tickets!"
     else:
-        return "Restaurant is not open yet"
-    
-def delete_reservation(id :int ,db: Session):
-    delete_reservation_by_id(id,db)
-    
-    rest =db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()
+        return "Restaurant is not active yet"
+
+
+def delete_reservation(id: int, db: Session):
+    delete_reservation_by_id(id, db)
+
+    rest = db.query(models.restaurantState).order_by(
+        models.restaurantState.id.desc()).first()
     onHoldQueue = json.loads(rest.onHoldQueueJ)
-    
+
     onHoldQueue.remove(id)
-    rest.onHoldQueueJ=json.dumps(onHoldQueue)
-    
+    rest.onHoldQueueJ = json.dumps(onHoldQueue)
+
     db.commit()
     return "Delete done"
 
-#QRcode
 
-def getReservationCode(id :int, db : Session):
-    resv=get_reservation_by_id(id,db)
+def chek_reservation(id: int, db: Session):
+    rest = db.query(models.restaurantState).order_by(
+        models.restaurantState.id.desc()).first()
+    if rest.is_active:
+        reservation = get_reservation_by_id(id, db)
+        if reservation:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+# QRcode
+
+def getReservationCode(id: int, db: Session):
+    resv = get_reservation_by_id(id, db)
     return resv.QRcode
-    
 
-def verify_reservation(qr_code: str,db:Session):
+
+def verify_reservation(qr_code: str, db: Session):
     # Verify that the QR code data matches the secret token
-    rest =db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()
+    rest = db.query(models.restaurantState).order_by(
+        models.restaurantState.id.desc()).first()
     onHoldQueue = json.loads(rest.onHoldQueueJ)
     passed = json.loads(rest.passedJ)
-    if qr_code == getReservationCode(onHoldQueue[0],db):
-        passed.append(onHoldQueue[0])
-        user=get_user(db,onHoldQueue[0])
-        user.nb_tickets-=1
-        onHoldQueue.pop(0)
-        rest.onHoldQueueJ=json.dumps(onHoldQueue)
-        rest.passedJ=json.dumps(passed)
-        (db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()).nbServed+=1
-        db.commit()
-
-        return "Reservation Passed!"
+    if onHoldQueue == []:
+        return "There is no reservation !"
     else:
-        return "Wrong QR code!"
-        
-def cancel_reservation_by_worker(db:Session):
-    rest =db.query(models.restaurantState).order_by(models.restaurantState.id.desc()).first()
+
+        if qr_code == getReservationCode(onHoldQueue[0], db):
+            passed.append(onHoldQueue[0])
+            user = get_user(db, onHoldQueue[0])
+            user.nb_tickets -= 1
+            onHoldQueue.pop(0)
+            rest.onHoldQueueJ = json.dumps(onHoldQueue)
+            rest.passedJ = json.dumps(passed)
+            (db.query(models.restaurantState).order_by(
+                models.restaurantState.id.desc()).first()).nbServed += 1
+            db.commit()
+
+            return "Reservation Passed!"
+        else:
+            return "Wrong QR code!"
+
+
+def cancel_reservation_by_worker(db: Session):
+    rest = db.query(models.restaurantState).order_by(
+        models.restaurantState.id.desc()).first()
     onHoldQueue = json.loads(rest.onHoldQueueJ)
-    delete_reservation(onHoldQueue[0],db)
-    
-    return "Reservation Deleted!"
+    if onHoldQueue == []:
+        return "There is no reservation !"
+    else:
+        delete_reservation(onHoldQueue[0], db)
+
+        return "Reservation Deleted!"
 
 #JWT
 

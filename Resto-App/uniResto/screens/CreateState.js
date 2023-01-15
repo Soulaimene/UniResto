@@ -7,7 +7,7 @@ import SelectDropdown from 'react-native-select-dropdown'
 import { NavigationContainer } from '@react-navigation/native';
 import { useState } from 'react';
 import axios from 'axios';
-
+import { url } from './config';
 export default function CreateState({navigation}) {
 
   
@@ -18,9 +18,6 @@ const [desert,setDesert]=useState("");
 const [salad,setSalad]=useState("");
 const [meat,setMeat]=useState("");
 const [supliment,setSup]=useState("");
-
-
-const url = "http://10.0.2.2:8000"
 
 //__________________Functions______________________________
 
@@ -41,7 +38,7 @@ const createS = async () => {
   searchParams.append('supliment', supliment);
 
   
-const endpoint =`http://10.0.2.2:8000/restorantState/?${searchParams.toString()}`;
+const endpoint = `${url}/restorantState/?${searchParams.toString()}`;
   
   await axios.post(endpoint, { headers: {"content-type": "application/json"} })
   
