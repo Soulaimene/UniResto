@@ -1,24 +1,45 @@
 import React from 'react'
-import { KeyboardAvoidingView,SafeAreaView, StyleSheet, Text, TextInput, View, Button, TouchableOpacity, Platform,ScrollView } from 'react-native';
+import { KeyboardAvoidingView,Image,SafeAreaView, StyleSheet, Text, TextInput, View, Button, TouchableOpacity, Platform,ScrollView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import axios from 'axios';
 import { useState , useEffect} from 'react';
 import { Alert } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { url } from './config';
 import COLORS from '../constants/colors';
+import Logo from '../assets/Logo.jpg';
+import {Dropdown} from 'react-native-element-dropdown';
+import { SelectList  } from 'react-native-dropdown-select-list';
 export default function ManageState({navigation}){
 
 
 {/*_______________________ Variables ___________________________*/}
 const [data, setData] = useState([]);
-const [msgState,setmsg]=useState('')
+const [msgState,setmsg]=useState(null)
 const [button, setButton] = useState(null);
 const [buttonfreez, setButtonfreez] = useState(null);
 const [params,setparams] = useState(null);
 
 const [freezed,setmsgfreezed]=useState('Freeze')
 const [ref,setref]=useState(false)
+const [logout,setLogout]=useState(null);
+const [Selected ,setSelected]=useState("")
 {/*_______________________ UseEffect ___________________________*/}
+
+const a =[{key :'1',value:"azzaa"}]
+
+
+useEffect(()=>{//logout button
+  setLogout(
+    <View style={{position: 'absolute', right: 22, top: -15}}>
+    <TouchableOpacity  style ={{backgroundColor: "#2080A0",opacity: 0.6,borderRadius:10,borderColor:"white",paddingHorizontal:9,paddingVertical:9,flexDirection:"row"}}onPress={()=>{ delete axios.defaults.headers.common["Authorization"]; navigation.navigate("Login");console.log( axios.defaults.headers.common["Authorization"])}} >
+      <Icon name="logout" color={COLORS.white} size={15}/>
+      <Text style={{color:"white",fontWeight:"bold",marginLeft:5}}>Log Out</Text>
+    </TouchableOpacity>
+    </View>
+  )
+},[])
+
 
 
 useEffect(()=>{     // closed to open resto
@@ -26,22 +47,31 @@ useEffect(()=>{     // closed to open resto
  axios.get(url+'/restorantState/state') // 
   .then(response => {
    if (response.data==true){ 
-    setmsg('Open')
+    setmsg(<View style={{alignItems:"center",justifyContent:"center"}}>
+          <Text style={{color:"white"}}>Restaurant is Currently :</Text>
+          <Text style={{color:"green",fontWeight:"bold"}}>Open !</Text>
+          </View>)
     setButton(
       <TouchableOpacity 
                         onPress={() => axios.put(url+'/restorantState/state')
                             .then(navigation.navigate('HomeWorker',{param:ref}))} 
-                        style={styles.CreateState} >
-        <Text style={{color:"#fff"}}>Close Resto</Text>
+                        style={styles.CreateStateClosed} >
+        <Text style={{color:"#fff"}}>Close Restaurant</Text>
+        <Icon name="lock-outline" color={"white"} size={20}/>
       </TouchableOpacity>);
 
   } else{
-    setmsg('Closed')
+    setmsg(<View style={{alignItems:"center",justifyContent:"center"}}>
+          <Text style={{color:"white"}} >Restaurant is Currently :</Text>
+          <Text style={{color:COLORS.red,fontWeight:"bold"}}>Closed !</Text>
+          
+          </View>)
     setButton(
       <TouchableOpacity     onPress={() => axios.put(url+'/restorantState/state')
                                 .then(navigation.navigate('HomeWorker',{param:ref}))}  
-                            style={styles.CreateState} >
-        <Text style={{color:"#fff"}}>Open Resto</Text>
+                            style={styles.CreateStateOpen} >
+        <Text style={{color:"#fff"}}>Open Restaurant</Text>
+        <Icon name="lock-open" color={"white"} size={20}/>
       </TouchableOpacity>)
   }
 })
@@ -77,7 +107,8 @@ useEffect(()=>{     //freeze/unfreze method
                         onPress={() => axios.put(url+"/restorantState/queue") 
                             .then(navigation.navigate("ManageState",{param:ref})) } 
                         style={styles.CreateStatefreez} >
-        <Text style={{color:"#fff"}}>freeze</Text>
+        <Text style={{color:"#fff",marginRight:5}}>Freeze</Text>
+        <Icon name="ac-unit" size={20} color={COLORS.white}/>
       </TouchableOpacity>);
 
   } else{
@@ -86,7 +117,8 @@ useEffect(()=>{     //freeze/unfreze method
       <TouchableOpacity     onPress={() => axios.put(url+"/restorantState/queue") 
                                 .then(navigation.navigate("ManageState",{param:ref})) } 
                             style={styles.CreateStatefreez} >
-        <Text style={{color:"#fff"}}>unfreeze</Text>
+        <Text style={{color:"#fff",marginRight:5}}>Unfreeze</Text>
+        <Icon name="ac-unit" size={20} color={COLORS.white}/>
       </TouchableOpacity>)
   }
 })
@@ -118,44 +150,57 @@ function showAlert(title,msg) {
     return (
       
 <ScrollView style={{backgroundColor:COLORS.dark}}>
+  
     <SafeAreaView style={{flex:1 , justifyContent : "center",flexDirection: "column",}}>
-
-        <View style={{paddingHorizontal:25}}>
-            <View style={{marginTop:50,alignItems: 'center'}}>
-            <Text style={{fontSize:28,color:COLORS.white}}>Welcome  </Text>
+   
+        <View style={{paddingHorizontal:25,marginTop:40}}>
+        {logout}
+            <View style={{marginTop:5,alignItems: 'center'}}>
+            {/* <Image source={Logo} style={styles.logo}  /> */}
+            <Text style={{fontSize:28,color:COLORS.white}}>Welcome </Text>
             <Text style={{fontWeight: "bold",fontSize:30,color:COLORS.white}}>Mr. {data.name} !  </Text>
+           
             </View>
         </View>
+          
+ 
+    
       {/*_______________________ Open/Closed ___________________________*/}
-        <TouchableOpacity>
-            <Text>Resto is Currently {msgState}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-        style={styles.Scan}
-        onPress={()=>navigation.navigate('QRr')}>
-                <Text style={{color:"white"}} > SCAN Student's QR</Text>
-        </TouchableOpacity>
+        <View style={{justifyContent:"center",alignItems:"center",marginTop:20,marginBottom:20}}>
+            <Text> {msgState}</Text>
+        </View>
+        <View>
+            
+            <TouchableOpacity 
+            style={styles.Scan}
+            onPress={()=>navigation.navigate('QRr')}>
+              <Icon name ="qr-code-scanner" size={20} />
+                    <Text style={{marginLeft:10}} > SCAN Student's QR</Text>
+            </TouchableOpacity>
+        </View>
         {/*_______________________ Cancel Reservation ___________________________*/}
-        <TouchableOpacity onPress={()=>axios.post(url+"/reservation/")
-        .then(response => {
-            if (response.data !== 'There is no reservation !')
-            {
-                showAlert('Done !','User has been deleted successfully !')
-            }
-            else {
-                showAlert('Error !','There is no reservation !')
-              }
-        })
+        <TouchableOpacity 
+                style={styles.cancel}
+                onPress={()=>axios.post(url+"/reservation/")
+                .then(response => {
+                    if (response.data !== 'There is no reservation !')
+                    {
+                        showAlert('Done !','Reservation has been deleted successfully !')
+                    }
+                    else {
+                        showAlert('Error !','There is no reservation !')
+                      }
+                })
 
         }>
-            <Text>Cancel Student's Reservation</Text>
+            <Icon name ="block" color={"white"} size={20}/>
+            <Text style={{marginLeft:10,color:"white"}}>Cancel Student's Reservation</Text>
         </TouchableOpacity>
-        <View style={{flexDirection:"row",justifyContent: 'center'}}>
+        <View style={{flexDirection:"row",alignItems:"center",justifyContent:"center"}}>
          {/*_______________________ Frzze Button ___________________________*/}
-        <View style={{paddingHorizontal:50, marginTop:25}}>{buttonfreez}</View>
+        <View style={{ marginTop:25,marginRight:10}}>{buttonfreez}</View>
          {/*_______________________ Manage ___________________________*/}
-        <View style={{ marginHorizontal:50,marginTop:25}} >{button}</View>
+        <View style={{marginTop:25}} >{button}</View>
         </View>
 <View>
         {params}
@@ -178,6 +223,7 @@ const styles = StyleSheet.create({
       backgroundColor:"#E93C49",
       paddingVertical:20,
       borderRadius:10,
+      paddingHorizontal:35,
       
     },
     CreateStatefreez:{
@@ -185,16 +231,57 @@ const styles = StyleSheet.create({
         backgroundColor:"blue",
         paddingVertical:20,
         borderRadius:10,
+        paddingHorizontal:35,
+        flexDirection:"row"
         
       },
       Scan :{
-        alignItems:"center",
+        alignItems: 'center',
+        justifyContent: 'center',
         paddingVertical:20,
-        marginHorizontal:50,
+        marginHorizontal:35,
         borderRadius:10,
-        backgroundColor:COLORS.red
+        backgroundColor:"white",
+        flexDirection:"row"
         
-      }
+      },
+      logo: {
+        width: 200,
+        height: 200,
+
+        borderRadius: 50,
+        marginTop: 50,
+        borderWidth:5,
+      },
+      cancel : {
+        flexDirection:"row",
+        alignItems:"center",
+        justifyContent:"center",
+        backgroundColor:"#E93C49",
+        paddingVertical:20,
+        marginHorizontal:35,
+        borderRadius:10,
+        marginTop:10
+
+      },
+      CreateStateOpen:{
+        alignItems:"center",
+        backgroundColor:"green",
+        paddingVertical:20,
+        borderRadius:10,
+        paddingHorizontal:35,
+        flexDirection:"row"
+        
+      },
+      CreateStateClosed:{
+        alignItems:"center",
+        backgroundColor:COLORS.red,
+        paddingVertical:20,
+        borderRadius:10,
+        paddingHorizontal:35,
+        flexDirection:"row"
+        
+      },
   });
 
 

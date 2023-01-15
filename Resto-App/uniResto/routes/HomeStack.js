@@ -32,7 +32,10 @@ const screens ={
         screen:Edinar
     },
     ManageState:{
-        screen:ManageState
+        screen:ManageState,
+       
+        
+        
     },
     QRr:{
         screen:QRr
@@ -42,7 +45,7 @@ const screens ={
     },
     Menu:{
         screen:Menu
-    }
+    },
 }
 const HomeStack= createStackNavigator(screens);
 

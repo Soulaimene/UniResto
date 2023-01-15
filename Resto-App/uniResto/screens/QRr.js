@@ -8,7 +8,13 @@ export default function QRr() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [text, setText] = useState('Not yet scanned')
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    if (error && error.status === 401) {
+      navigate.navigate('Login');
+    }
+  }, [error]);
 
   const askForCameraPermission = () => {
     (async () => {

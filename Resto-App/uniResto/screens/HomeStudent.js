@@ -20,6 +20,8 @@ const [MakeRes,SetMakeRes]=useState(null);
 const [que,setque]=useState(null);
 const [ic,seticon]=useState(null)
 const [ref,setref]=useState(false)
+const [logout,setLogout]=useState(null);
+const [refresh, setRefresh] = useState(null);
 //const [modalVisible, setModalVisible] = useState(false);
 function showAlert(title,msg) {
   Alert.alert(
@@ -39,6 +41,20 @@ function showAlert(title,msg) {
 {/*_______________________ UseEffect ___________________________*/}
 
 const [autoRefresh, setAutoRefresh] = useState(false)
+const [error, setError] = useState(null);
+
+
+useEffect(()=>{
+  setLogout(
+    <View style={{position: 'absolute', right: 10, top: -40}}>
+    <TouchableOpacity  style ={{backgroundColor: "#2080A0",opacity: 0.6,borderRadius:10,borderColor:"white",paddingHorizontal:9,paddingVertical:9,flexDirection:"row"}}onPress={()=>{ delete axios.defaults.headers.common["Authorization"]; navigation.navigate("Login");console.log( axios.defaults.headers.common["Authorization"])}} >
+      <Icon name="logout" color={COLORS.white} size={15}/>
+      <Text style={{color:"white",fontWeight:"bold",marginLeft:5}}>Log Out</Text>
+    </TouchableOpacity>
+    </View>
+  )
+},[])
+
 
 
 useEffect(()=>{ //get nb of tickets
@@ -62,8 +78,10 @@ setref(true)
         {
                     {  SetMakeRes(
                       
-                      <View style={{backgroundColor:"#rgb(34,21,57)",paddingVertical:10,borderTopRightRadius:15,borderBottomLeftRadius:15}}>
-                            <TouchableOpacity  onPress={() => {
+                      
+                            <TouchableOpacity 
+                            style={{backgroundColor:"#E93C49",paddingVertical:10,borderRadius:15}}
+                             onPress={() => {
                               axios.post(url+'/makeReservation/')
                                   .then(response => {
                                       if (response.data === "You are out of tickets!") {
@@ -86,14 +104,17 @@ setref(true)
                               <Text style={{color:"white", textAlign:'center',fontWeight: 'bold'}}>Make Reservation</Text>
                               
                             </TouchableOpacity>
-                            </View>
+                           
                        );}
         }
         else{
           {  SetMakeRes(
-            <View style={{backgroundColor:"#rgb(34,21,57)",paddingVertical:10,borderTopRightRadius:15,borderBottomLeftRadius:15}}>
-            <TouchableOpacity  onPress={() =>navigation.navigate('ManageReservation')}  >
-              <Text style={{color:"white", textAlign:'center',fontWeight: 'bold'}}>Manage Reservation</Text>
+            <View >
+            <TouchableOpacity 
+            style={{backgroundColor:"#rgb(34,21,57)",paddingVertical:10,borderRadius:18,flexDirection:"row",alignItems:"center",justifyContent:"center"}}
+             onPress={() =>navigation.navigate('ManageReservation')}  >
+              <Text style={{color:"white", textAlign:'center',fontWeight: 'bold',marginRight:10}}>Manage Reservation</Text>
+              <Icon name='settings' size={20} color={"white"}/>
             </TouchableOpacity>
             </View>
             
@@ -108,7 +129,9 @@ setref(true)
  })
 
   .catch(error => {
-    console.error(error);
+    if (error && error.status === 401) {
+      navigate.navigate('Login');
+    }
   });//});
  
 },[refreshing,navigation.state.params])
@@ -124,7 +147,7 @@ useEffect(()=>{ // check if resto closed or open
     setmsg(<Text style={{color:"red"}}>Closed !</Text>)
   }
 })
-})
+},[refreshing])
 
 
 
@@ -174,6 +197,7 @@ useEffect(() => {/* get request to get the user student info*/
   return (
 <ScrollView 
   style={{flex:1,backgroundColor:"#130B20"}}
+  
   contentContainerStyle={{flex:1}}
   refreshControl={
     <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
@@ -183,7 +207,7 @@ useEffect(() => {/* get request to get the user student info*/
   
       <ImageBackground style={{flex: 0.7}} source={require('../assets/Logo.jpg')}>
         <View style={style.header}>
-         
+        {logout}
         </View>
         <View style={style.imageDetails}>
   

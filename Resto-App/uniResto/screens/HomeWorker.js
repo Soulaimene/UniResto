@@ -23,6 +23,16 @@ const [refresh, setRefresh] = useState(null);
 const [ref,setref]=useState(false)
 {/*_______________________ UseEffect ___________________________*/}
 
+const [error, setError] = useState(null);
+
+useEffect(() => {
+  if (error && error.status === 401) {
+    navigate.navigate('Login');
+  }
+}, [error]);
+
+
+
 useEffect(()=>{
   setLogout(
     <View style={{position: 'absolute', right: 5, top: -20}}>
@@ -51,7 +61,7 @@ useEffect(()=>{ // Manage or create State
    if (response.data==true){
             setButton(
                   <TouchableOpacity  onPress={() => {navigation.navigate('ManageState',{param:ref})}}  style={styles.CreateState} >
-                   <Icon name="local-dining" color={COLORS.white} size={20}/>
+                   <Icon name="settings" color={COLORS.white} size={20}/>
                     <Text style={{color:"#fff"}}>Manage State</Text>
                     
                   </TouchableOpacity>
@@ -65,6 +75,7 @@ useEffect(()=>{ // Manage or create State
           
           setButton(
             <TouchableOpacity onPress={() => {navigation.navigate('CreateState',{param:ref})}} style={styles.CreateState} >
+              <Icon name="local-dining" color={COLORS.white} size={20}/>
               <Text style={{color:"#fff"}}>Create State</Text>
             </TouchableOpacity>)
   }
@@ -183,10 +194,11 @@ const styles = StyleSheet.create({
     },
     CreateState:{
       alignItems:"center",
-      backgroundColor:"#E93C49",
+      backgroundColor:COLORS.red,
       paddingVertical:5,
       borderRadius:10,
       marginHorizontal:60,
+      
       
     }
   });

@@ -23,6 +23,7 @@ const [Make,SetMake]=useState(null);
 const [msgopco,setmsgopco]=useState('')
 const [Queue,setQueue] = useState(null)
 const [DELET,setDELET]=useState(null)
+const [que,setque]=useState(null);
 
 function showAlert(title,msg) {
   Alert.alert(
@@ -42,6 +43,24 @@ function showAlert(title,msg) {
 
    
 {/*_______________________ UseEffect ___________________________*/}
+
+const [error, setError] = useState(null);
+
+useEffect(()=>{ //get nb of tickets
+    axios.get(url+"/getTickets/").then(resp => 
+      {setque (
+      <View>
+        <Text style={{fontWeight: 'bold',color: COLORS.white}} >You Have {resp.data} Tickets</Text>
+      </View>
+    )})
+  },[refreshing])
+
+useEffect(() => {
+  if (error && error.status === 401) {
+    navigate.navigate('Login');
+  }
+}, [error]);
+
 
 
 useEffect(()=>{ /* Render QR CODE */ 
@@ -81,12 +100,12 @@ useEffect(() => {/* get request to get the user student info*/
     .then(resp=> {if (resp.data==true) {
             axios.get(url+'/restorantState/queue') 
                 .then(resp =>
-                    { if (resp.data==false) {setmsg("Queue  is frozen"), setmsgopco("Restaurant Is Currently Open")}
+                    { if (resp.data==false) {setmsg("Queue  is Frozen !"), setmsgopco("Restaurant Is Currently Open.")}
 
 
-                    else {setmsg("Queue is Moving !"),setmsgopco("Restaurant Is Currently Open")}}
+                    else {setmsg("Queue is Moving !"),setmsgopco("Restaurant Is Currently Open.")}}
                     )}
-                else {setmsgopco("Restaurant Is Currently Closed")}
+                else {setmsgopco("Restaurant Is Currently Closed.")}
     
 },[refreshing])
 })
@@ -119,7 +138,7 @@ useEffect(()=>{ /* Check if the Resto is open or closed and render neccesairy in
         }
         else{
           {  SetMakeRes(
-            <TouchableOpacity style={{paddingVertical:10,borderTopRightRadius:15,borderTopLeftRadius:15,marginHorizontal:10,flexDirection:"row",backgroundColor:"#6A08F6"}} onPress={() =>navigation.navigate('ManageReservation')}  >
+            <TouchableOpacity style={{paddingVertical:10,borderRadius:20,marginHorizontal:10,flexDirection:"row",backgroundColor:"#6A08F6"}} onPress={() =>navigation.navigate('ManageReservation')}  >
                  <View style={{marginLeft:5}}>
                  <Icon color={COLORS.white}  size={20} name='room-service'/>  
 
@@ -154,18 +173,18 @@ useEffect(()=>{ //estimated time
             axios.get(url+'/restorantState/queue')
             .then(resp=> {if(resp.data==true){
                 setQueue(
-                    <View>
+                    <View style={{alignItems:"center",justifyContent:"center"}}>
                     <Text>Number of Students before you : {x} </Text>
-                    <Text>Estimated time :  {(x*15)/60} Minutes and {(x*15)%60} Seconds  </Text>
+                    <Text>Estimated time :  { Math.floor((x*15)/60)} Minutes and {(x*15)%60} Seconds.  </Text>
                     </View>
                 )
                 
     
             }else{
                 setQueue(
-                    <View style={{marginTop:2}}>
+                    <View style={{alignItems:"center",justifyContent:"center"}}>
                     <Text>Number of Students before you : {x} </Text>
-                    <Text style={{marginTop:5}}>Estimated time if the queue is moving  :  {(x*15)/60} Minutes and {(x*15)%60} Seconds  </Text>
+                    <Text style={{marginTop:5}}>Estimated time :  {(x*15)/60} Minutes and {(x*15)%60} Seconds.  </Text>
                     </View>
                 )
             }})
@@ -203,10 +222,10 @@ useEffect(()=>{ //estimated time
         
                 <View style={{flexDirection: 'row', marginTop: 1,flexDirection:'row',alignItems:'center'}}>
                 <Icon name="people" size={28} color={COLORS.red} style={{marginTop:10}} />
-
+          
           <Text
             style={{
-              
+                
               marginTop: 10,
               width:350,              
               marginLeft: 5,
@@ -216,24 +235,25 @@ useEffect(()=>{ //estimated time
             }}>
               Welcome {data.name} !
           </Text>
+          
  
         
      
         <Text style={{marginTop: 20, lineHeight: 22}}></Text>
       </View>
       <View>
-        <View style={{flexDirection:'row',marginBottom:4}}>      
-            <Text style={{}}>{msgopco} </Text>
-            <Text style={{color:"#6907F7",marginLeft:5}}>{msgState}</Text>       
+        <View style={{marginBottom:4,alignItems:"center",justifyContent:"center"}}>      
+            <Text style={{alignItems:"center",justifyContent:"center"}}>{msgopco} </Text>
+            <Text style={{marginLeft:5,fontWeight:"500"}}>{msgState}</Text>       
             </View>
 
         {Queue}
             
             </View>
-      <View style={{alignItems:"center",marginTop:20}}>
+      <View style={{alignItems:"center",marginTop:10}}>
 
       <View style={{flexDirection:"row"}} >
-            <TouchableOpacity style={{marginRight:30,paddingVertical:10,borderTopRightRadius:15,borderTopLeftRadius:15,marginHorizontal:10,flexDirection:"row",backgroundColor:" rgb(123,2,16)"}} 
+            <TouchableOpacity style={{marginRight:30,paddingVertical:10,borderRadius:15,marginTop:2,marginHorizontal:10,flexDirection:"row",backgroundColor:COLORS.red}} 
                 onPress={()=>
                 {axios.delete(url+'/reservation/'),showAlert('Done !',"Reservation Deleted"),navigation.navigate("HomeStudent",{param:ref})}}>
             <View style={{marginLeft:10}}>
@@ -247,32 +267,27 @@ useEffect(()=>{ //estimated time
         
         </View>
 
- 
-      <View style={style.footer}>
-        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-          <Text
-            style={{
-              width: 350,
-              marginLeft: 5,
-              fontSize: 12,
-              fontWeight: 'bold',
-              color: COLORS.white,
-            }}>
-            2.5D/Per Ticket bundle
- 
-          </Text>
+        <View style={style.footer}>
+        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  width: 350}}>
+            {que}
         </View>
 
         <TouchableOpacity 
         onPress={() =>navigation.navigate('Edinar')}
         style={style.bookNowBtn}>
-       
-          <Text
-            style={{color: COLORS.red, fontSize: 16, fontWeight: 'bold'}}>
-            Purchase Tickets 
+
+    
+
+          <Text  style={{color: COLORS.red, fontSize: 16, fontWeight: 'bold'}}> Purchase Tickets  </Text>
+          <Text style={{fontSize:11}}
+        >
+            
+            2.5D/Per Ticket bundle
           </Text>
+          
         </TouchableOpacity>
       </View>
+      
 
       
     </View> 
@@ -306,8 +321,8 @@ const style = StyleSheet.create({
   },
   detailsContainer: {
     
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
     paddingVertical: 20,
     paddingHorizontal: 20,
     backgroundColor: COLORS.white,
@@ -334,8 +349,8 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
   },
 });
 

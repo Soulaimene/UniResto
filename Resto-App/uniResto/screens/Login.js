@@ -7,7 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import axios from 'axios';
 import SelectDropdown from 'react-native-select-dropdown'
 import COLORS from '../constants/colors';
-
+import {Dropdown} from 'react-native-element-dropdown';
 import { url } from './config';
 
 
@@ -18,7 +18,7 @@ export default function Login({navigation}) {
   const options = ["Student","Worker"];
   const [selectedOption, setSelectedOption] = useState(null);
   const [number, setNumber] = useState(0);
-
+  const dta = [{label: 'item1', value: 1}, {label: 'item2', value: 2}]
   function handleChange(value) {
     setSelectedOption(value);
     if (selectedOption === 'Worker') {
@@ -59,6 +59,7 @@ const login = async () => {
     
 }).catch(err => {
    console.log(err.response.data)
+  
     
 })
     
@@ -79,6 +80,7 @@ const login = async () => {
         <TextInput 
           placeholder='  Email IDs' 
           value={email}
+          required
           onChangeText={text=>SetEmail(text)}
           style={{flex:1}}/>
           <MaterialIcons name='alternate-email' size={20} color="#666" style={{marginLeft:20}}/>
@@ -89,6 +91,7 @@ const login = async () => {
     <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:20}}>
       <TextInput 
         placeholder='  Password' 
+        required
         value={password}
         onChangeText={text=>SetPassword(text)}
         style={{flex:1}}
@@ -114,13 +117,14 @@ const login = async () => {
                               }}>
     <SelectDropdown       
                             value={selectedValue}
-                            dropdownButtonStyle={{backgroundColor:"white"}}
-                            dropdownStyle={{ backgroundColor: 'white', borderRadius: 8,marginTop:0}}
+                            
+                            dropdownStyle={{ backgroundColor: 'white', borderRadius: 12,marginTop:0}}
                             dropdownOverlayColor='rgba(255, 255, 255, 0.5)'
                             rowStyle={{ height: 40, justifyContent: 'center', alignItems: 'center',backgroundColor:"white" }}
                             rowTextStyle={{ color: 'black', fontSize: 18 }}
                             selectedRowStyle={{ backgroundColor: COLORS.red }}
                             selectedRowTextStyle={{ color: 'white' }}
+                            
                             data={options}
                             onSelect={(selectedValue, indexa) => {
                               setIndex(indexa)
@@ -129,6 +133,9 @@ const login = async () => {
                             
                           
                       />    
+
+
+
                       
                       </View>
                      
@@ -145,10 +152,7 @@ const login = async () => {
         <Text style={{color:"#fff",textAlign:"center"}}> Login</Text>
       </TouchableOpacity>
       {error && <Text style={styles.error}>{error}</Text>}
-      <TouchableOpacity>
-      <Text style={{textDecorationLine: 'underline', color:"#666",textAlign:"center",marginTop:10}}>Forgot Password?</Text>
-      
-      </TouchableOpacity>
+  
       <TouchableOpacity onPress={pressHandler} style={{flexDirection:'row',justifyContent:'flex-end',alignSelf: 'center',position:"relative",marginTop:30}}>
    
    <Text style={{color:"#666"}}> New to the App?</Text>

@@ -6,7 +6,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import SelectDropdown from 'react-native-select-dropdown'
 import { url } from './config';
 import { useState } from 'react';
-
+import COLORS from '../constants/colors';
 export default function Register({navigation}) {
 
   
@@ -51,6 +51,15 @@ const [IsSecureEntry2,setIsSecure2]=useState(true);
       setNumber(1);
     }
   }
+  const handleSubmit = () => {
+    if (name !== '' && password !== '' && email !== '' && selectedValue !=='') {
+      // All inputs are not empty
+      console.log("All inputs are not empty");
+    } else {
+      // One or more inputs are empty
+      console.log("One or more inputs are empty");
+    }
+  };
 
 	const insertData=() =>{
 		fetch(url+'/users/',{
@@ -77,12 +86,13 @@ const pressHandler=() =>{
 
       <View style={{paddingHorizontal:25}}>
         <View style={styles.container}>
-          <Text style={{fontSize:28, marginTop:40}}>Create Account </Text>
+          <Text style={{fontSize:28, marginTop:30}}>Create Account </Text>
         </View>
 
            {/*_______________________ Full name Section ___________________________*/}
-                  <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:80,marginBottom:20}}>
+                  <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:40,marginBottom:15}}>
                     <TextInput 
+                      required
                       value={name}
                       onChangeText={name =>SetName(name)}
                     placeholder='  Full name' 
@@ -95,8 +105,9 @@ const pressHandler=() =>{
 
            {/*____________________________ Email address section _______________________*/}
 
-                <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:20,marginBottom:20}}>
+                <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:20,marginBottom:15}}>
                   <TextInput 
+                          required
                           value={email}
                           onChangeText={email =>Setemail(email)}
                           onBlur={() => validateEmail(email)}
@@ -110,8 +121,9 @@ const pressHandler=() =>{
 
           {/* _______________________________Phone Number section_____________________________*/}
 
-                <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:20,marginBottom:20}}>
+                <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:20,marginBottom:15}}>
                   <TextInput 
+
                   placeholder='  Phone Number' 
                   style={{flex:1}}/>
                   <MaterialIcons name='phone' size={20} color="#666" style={{marginLeft:20}}/>
@@ -119,8 +131,9 @@ const pressHandler=() =>{
         {/*___________________________________________________________________________*/}
 
          {/* ________________________________Password Section______________________________ */}
-                <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:20,marginBottom:20}}>
+                <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:20,marginBottom:15}}>
                   <TextInput 
+                    required
                     value={password}
                     onChangeText={password =>Setpassword(password)}
                     onBlur={validatePasswords}
@@ -141,8 +154,9 @@ const pressHandler=() =>{
       {/*___________________________________________________________________________*/}
 
        {/*______________________________ Confirm password section ______________________________*/}
-            <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:20,marginBottom:20}}>
+            <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:20,marginBottom:15}}>
                 <TextInput 
+                  required
                   placeholder='  Confirm Password' 
                   style={{flex:1}}
                   onChangeText={text => setConfirmPassword(text)}
@@ -163,8 +177,16 @@ const pressHandler=() =>{
                 {errorpass && <Text style={styles.error}>{errorpass}</Text>}  
             </View>
        {/*______________________________DropDown____________________________________________________*/}
+                <View style={{alignItems:"center",justifyContent:"center"}}>
                       <SelectDropdown
                             value={selectedValue}
+                            
+                            dropdownStyle={{ backgroundColor: 'white', borderRadius: 12,marginTop:0}}
+                            dropdownOverlayColor='rgba(255, 255, 255, 0.5)'
+                            rowStyle={{ height: 40, justifyContent: 'center', alignItems: 'center',backgroundColor:"white" }}
+                            rowTextStyle={{ color: 'black', fontSize: 18 }}
+                            selectedRowStyle={{ backgroundColor: COLORS.red }}
+                            selectedRowTextStyle={{ color: 'white' }}
                             data={options}
                             onSelect={(selectedValue, indexa) => {
                               setIndex(indexa)
@@ -172,11 +194,12 @@ const pressHandler=() =>{
                             
                           
                       />      
+                      </View>
              
       {/*___________________________________________________________________________*/}
       
                             {/* Create account button */}
-      <TouchableOpacity onPress={() => insertData()} style={{
+      <TouchableOpacity onPress={() => {insertData(), navigation.navigate("Login"),{handleSubmit} }  } style={{
         paddingVertical:20,
         marginTop:30,
         backgroundColor:"#E93C49",

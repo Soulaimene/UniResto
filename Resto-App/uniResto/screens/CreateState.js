@@ -5,7 +5,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SelectDropdown from 'react-native-select-dropdown'
 import { NavigationContainer } from '@react-navigation/native';
-import { useState } from 'react';
+import { useState ,useEffect } from 'react';
 import axios from 'axios';
 import { url } from './config';
 export default function CreateState({navigation}) {
@@ -20,6 +20,9 @@ const [meat,setMeat]=useState("");
 const [supliment,setSup]=useState("");
 
 //__________________Functions______________________________
+
+const [error, setError] = useState(null);
+
 
 
 const createS = async () => {
