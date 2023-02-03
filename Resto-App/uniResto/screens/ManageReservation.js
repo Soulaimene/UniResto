@@ -52,14 +52,16 @@ useEffect(()=>{ //get nb of tickets
       <View>
         <Text style={{fontWeight: 'bold',color: COLORS.white}} >You Have {resp.data} Tickets</Text>
       </View>
-    )})
+    )})  .catch(error => {
+      if (error.response.status === 401) {
+        navigate.navigate('Login',{param:ref});
+      }
+      else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
+    });//});
+   
   },[refreshing])
 
-useEffect(() => {
-  if (error && error.status === 401) {
-    navigate.navigate('Login');
-  }
-}, [error]);
+
 
 
 
@@ -67,7 +69,7 @@ useEffect(()=>{ /* Render QR CODE */
 axios.get(url+"/qrcode/") // 
      .then(response => {console.log(response.data)
                   SetMake(<View style={{alignItems:"center",paddingTop:7}}>
-                            <QRCode size={310} color={COLORS.dark} value={response.data}/>
+                            <QRCode size={320}  value={response.data}/>
                           </View>
                             
 
@@ -76,10 +78,13 @@ axios.get(url+"/qrcode/") //
                      }
                           )
 
-  .catch(error => {
-    console.error(error);
-  });
- 
+                          .catch(error => {
+                            if (error.response.status === 401) {
+                              navigate.navigate('Login',{param:ref});
+                            }
+                            else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
+                          });//});
+                         
 },[refreshing])
 
 useEffect(() => {/* get request to get the user student info*/
@@ -89,8 +94,13 @@ useEffect(() => {/* get request to get the user student info*/
       setData(response.data);
     })
     .catch(error => {
-      console.error(error);
-    });
+      if (error.response.status === 401) {
+        navigate.navigate('Login',{param:ref});
+      }
+      else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
+    });//});
+   
+    
   },[refreshing] );
 
 
@@ -104,11 +114,23 @@ useEffect(() => {/* get request to get the user student info*/
 
 
                     else {setmsg("Queue is Moving !"),setmsgopco("Restaurant Is Currently Open.")}}
-                    )}
+                    )  .catch(error => {
+                      if (error.response.status === 401) {
+                        navigate.navigate('Login',{param:ref});
+                      }
+                      else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
+                    });//});
+                   }
                 else {setmsgopco("Restaurant Is Currently Closed.")}
     
+})   .catch(error => {
+  if (error.response.status === 401) {
+    navigate.navigate('Login',{param:ref});
+  }
+  else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
+});//});
+
 },[refreshing])
-})
        
        
 useEffect(()=>{ /* Check if the Resto is open or closed and render neccesairy informations */ 
@@ -150,7 +172,13 @@ useEffect(()=>{ /* Check if the Resto is open or closed and render neccesairy in
        ;}
         }
 
-    })
+    })  .catch(error => {
+      if (error.response.status === 401) {
+        navigate.navigate('Login',{param:ref});
+      }
+      else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
+    });//});
+   
 
 
   } else{
@@ -160,7 +188,8 @@ useEffect(()=>{ /* Check if the Resto is open or closed and render neccesairy in
 
   .catch(error => {
     console.error(error);
-  });//});
+    if (error.response.status == 500) {navigation.navigate('HomeStudent')}
+  });
  
 },[refreshing])
 
@@ -184,14 +213,23 @@ useEffect(()=>{ //estimated time
                 setQueue(
                     <View style={{alignItems:"center",justifyContent:"center"}}>
                     <Text>Number of Students before you : {x} </Text>
-                    <Text style={{marginTop:5}}>Estimated time :  {(x*15)/60} Minutes and {(x*15)%60} Seconds.  </Text>
+                    <Text style={{marginTop:5}}>Estimated time :  { Math.floor((x*15)/60)} Minutes and {(x*15)%60} Seconds.  </Text>
                     </View>
                 )
-            }})
+            }})  .catch(error => {
+              if (error.response.status === 401) {
+                navigate.navigate('Login',{param:ref});
+              }
+              else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
+            });
+           
 
             
         }
     )
+    .catch(error => {if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref}),showAlert('Sorry !',"You no longer have a reservation ! ")}
+        
+          })
 },[refreshing])
 
 
@@ -203,7 +241,7 @@ useEffect(()=>{ //estimated time
 
   return (
 <ScrollView 
-  style={{flex:1,backgroundColor:COLORS.dark}}
+  style={{flex:1,backgroundColor:"white"}}
   contentContainerStyle={{flex:1}}
   refreshControl={
     <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />

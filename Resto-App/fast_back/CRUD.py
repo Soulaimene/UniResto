@@ -85,7 +85,7 @@ def authenticate_user(db:Session,type :str, email: str, password: str):
 def add_state(db: Session, principal: str = "", desert: str = "", salad: str = "", meat: str = "", supliment: str = ""):
     rest = (db.query(models.restaurantState).order_by(
         models.restaurantState.id.desc()).first())
-    if not (rest) or rest.is_active == 0:
+    if (not (rest) or rest.is_active == 0):
         onHoldQueue = []
 
         passed = []

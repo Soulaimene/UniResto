@@ -25,11 +25,6 @@ const [ref,setref]=useState(false)
 
 const [error, setError] = useState(null);
 
-useEffect(() => {
-  if (error && error.status === 401) {
-    navigate.navigate('Login');
-  }
-}, [error]);
 
 
 
@@ -81,8 +76,10 @@ useEffect(()=>{ // Manage or create State
   }
 })
 
-  .catch(error => {
-    console.error(error);
+.catch(error => {
+  if (error.response.status === 401) {
+    navigate.navigate('Login',{param:ref});
+  }
   })
 },[navigation.state.params])
 
@@ -109,7 +106,9 @@ useEffect(()=>{ /* Check if the Resto is open or closed and render neccesairy in
   console.log(msgState)})
 
   .catch(error => {
-    console.error(error);
+    if (error.response.status === 401) {
+      navigate.navigate('Login',{param:ref});
+    }
   });//});
   //return unsubscribe;
 },[navigation.state.params])
@@ -122,7 +121,9 @@ axios.get(url+'/users/me/')
   setData(response.data);
 })
 .catch(error => {
-  console.error(error);
+  if (error.response.status === 401) {
+    navigate.navigate('Login',{param:ref});
+  }
 });
 }, []);
 

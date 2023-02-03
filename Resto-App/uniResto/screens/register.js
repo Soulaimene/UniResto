@@ -8,11 +8,17 @@ import { url } from './config';
 import { useState } from 'react';
 import COLORS from '../constants/colors';
 export default function Register({navigation}) {
-
+  const [ref,setref]=useState(false)
   
 const [IsSecureEntry,setIsSecure]=useState(true);
 const [IsSecureEntry2,setIsSecure2]=useState(true);
+const [text, setText] = useState('');
 
+const handleSubmit = () => {
+  if (text.trim().length === 0) {
+    console.log("Please enter a value");
+    return;
+  }}
 
   const[index,setIndex]=useState(0);
 	const [name,SetName]=useState("");
@@ -51,16 +57,12 @@ const [IsSecureEntry2,setIsSecure2]=useState(true);
       setNumber(1);
     }
   }
-  const handleSubmit = () => {
-    if (name !== '' && password !== '' && email !== '' && selectedValue !=='') {
-      // All inputs are not empty
-      console.log("All inputs are not empty");
-    } else {
-      // One or more inputs are empty
-      console.log("One or more inputs are empty");
+  const checkInputs = () => {
+    if (name.trim().length === 0 && password.trim().length === 0 && email.trim().length === 0) {
+      return true
     }
-  };
-
+    return false;
+  }
 	const insertData=() =>{
 		fetch(url+'/users/',{
 			method:'POST',
@@ -123,7 +125,7 @@ const pressHandler=() =>{
 
                 <View style={{ flexDirection:"row", borderBottomColor:"#ccc",borderBottomWidth:1,marginTop:20,marginBottom:15}}>
                   <TextInput 
-
+                  onSubmitEditing={handleSubmit}
                   placeholder='  Phone Number' 
                   style={{flex:1}}/>
                   <MaterialIcons name='phone' size={20} color="#666" style={{marginLeft:20}}/>
@@ -199,7 +201,7 @@ const pressHandler=() =>{
       {/*___________________________________________________________________________*/}
       
                             {/* Create account button */}
-      <TouchableOpacity onPress={() => {insertData(), navigation.navigate("Login"),{handleSubmit} }  } style={{
+      <TouchableOpacity disabled={checkInputs()}   onPress={() => {insertData(), navigation.navigate("Login",{param:ref}),{handleSubmit} }  } style={{
         paddingVertical:20,
         marginTop:30,
         backgroundColor:"#E93C49",

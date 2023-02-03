@@ -42,11 +42,6 @@ function showAlert(title,msg) {
 
 const [autoRefresh, setAutoRefresh] = useState(false)
 const [error, setError] = useState(null);
-useEffect(() => {
-  if (error && error.status === 401) {
-    navigate.navigate('Login');
-  }
-}, [error]);
 
 
 useEffect(()=>{
@@ -58,6 +53,7 @@ useEffect(()=>{
     </TouchableOpacity>
     </View>
   )
+
 },[refreshing])
 
 
@@ -68,7 +64,13 @@ useEffect(()=>{ //get nb of tickets
     <View>
       <Text style={{fontWeight: 'bold',color: COLORS.white}} >You Have {resp.data} Tickets</Text>
     </View>
-  )})
+  )})  .catch(error => {
+    if (error.response.status === 401) {
+      navigate.navigate('Login',{param:ref});
+    }
+    else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
+  });//});
+ 
 },[refreshing])
 
 useEffect(()=>{ /* Check if the Resto is open or closed and render neccesairy informations */ 
@@ -134,9 +136,10 @@ setref(true)
  })
 
   .catch(error => {
-    if (error && error.status === 401) {
-      navigate.navigate('Login');
+    if (error.response.status === 401) {
+      navigate.navigate('Login',{param:ref});
     }
+    else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
   });//});
  
 },[refreshing,navigation.state.params])
@@ -151,7 +154,13 @@ useEffect(()=>{ // check if resto closed or open
   else{
     setmsg(<Text style={{color:"red"}}>Closed !</Text>)
   }
-})
+})  .catch(error => {
+  if (error.response.status === 401) {
+    navigate.navigate('Login',{param:ref});
+  }
+  else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
+});//});
+
 },[refreshing])
 
 
@@ -166,7 +175,13 @@ useEffect(() => {/* get request to get the user student info*/
     })
     .catch(error => {
       console.error(error);
-    });
+    })  .catch(error => {
+      if (error.response.status === 401) {
+        navigate.navigate('Login',{param:ref});
+      }
+      else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
+    });//});
+   
   }, []);
 
 
@@ -189,9 +204,13 @@ useEffect(() => {/* get request to get the user student info*/
   } 
  })
 
-  .catch(error => {
-    console.error(error);
-  });//});
+ .catch(error => {
+  if (error.response.status === 401) {
+    navigate.navigate('Login',{param:ref});
+  }
+  else if (error.response.status == 500) {navigation.navigate('HomeStudent',{param:ref})};
+});//});
+
  
 },[refreshing])
 
